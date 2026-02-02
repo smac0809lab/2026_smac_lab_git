@@ -1,0 +1,11 @@
+/**:
+  ros__parameters:
+    device: "/dev/ttyACM0"
+    baudrate: 9600
+    frame_id: "gps"
+    tmode3: 0
+    nav_rate: 1
+    publish:
+      all: true
+      nav:
+        status: true
