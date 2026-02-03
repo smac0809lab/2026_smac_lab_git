@@ -3,24 +3,37 @@ ekf_filter_node:
     frequency: 30.0
     two_d_mode: true
     publish_tf: true
-
     map_frame: map
     odom_frame: odom
     base_link_frame: base_link
-    world_frame: odom
+    world_frame: odom  # 나중에 안정화되면 map으로 변경 추천
 
     # IMU 입력
     imu0: /imu/data
     imu0_remove_gravitational_acceleration: true
     imu0_config: [false, false, false,
-                  true,  true,  true,
+                  true,  true,  true,  # Roll, Pitch, Yaw 사용
                   false, false, false,
-                  true,  true,  true,
-                  false, false, false,]
-    # GPS 입력 (navsat에서 변환된 것)
+                  true,  true,  true,  # Angular velocity 사용
+                  false, false, false]
+
+    # GPS 입력 (navsat에서 실시간으로 만들어줄 토픽)
     odom0: /odometry/gps
-    odom0_config: [true,  true,  false,
+    odom0_config: [true,  true,  false, # X, Y 위치 사용
                    false, false, false,
                    false, false, false,
                    false, false, false,
                    false, false, false]
+
+navsat_transform:
+  ros__parameters:
+    use_odometry_yaw: false
+    wait_for_datum: false
+    publish_filtered_gps: true
+    yaw_offset: 1.5708  # 보통 90도(1.5708) 또는 0.0을 사용 (방향 안맞으면 수정)
+    magnetic_declination_radians: 0.15 # 한국 자편각(약 8.5도), 정밀도 위해 필요
+    
+    # 입력 토픽 이름 리매핑 (중요!)
+    gps_input_topic: /ublox_gps_node/fix
+    imu_input_topic: /imu/data
+    odom_input_topic: /odometry/filtered
