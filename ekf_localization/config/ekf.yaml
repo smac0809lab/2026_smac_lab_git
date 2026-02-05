@@ -12,15 +12,14 @@ ekf_filter_node:
     imu0: /imu/data
     imu0_remove_gravitational_acceleration: true
     
-    # [수정] 부호가 반대인 Orientation(Yaw)은 false로 꺼서 무시합니다.
-    # 대신 각속도(Angular velocity)를 사용하되, 아래 '임시 조치'를 참고하세요.
+    # [확인] Orientation을 true로 했으므로 IMU의 절대 각도를 믿고 사용합니다.
     imu0_config: [false, false, false,
-                  false, false, false, # Orientation 사용 안 함
+                  true,  true,  false,  # Roll, Pitch, Yaw 사용
                   false, false, false,
-                  true,  true,  true,  # Angular velocity 사용
-                  true,  true,  true]  # Linear acceleration 사용
+                  true,  true,  true,  
+                  true,  true,  true]  
 
-    imu0_relative: true                # 켰을 때 정면을 0으로 설정
+    imu0_relative: false               # [수정] 절대 각도(북쪽 기준)를 사용하도록 false 설정
     imu0_queue_size: 10
 
     # GPS 입력
@@ -34,13 +33,14 @@ ekf_filter_node:
 
 navsat_transform:
   ros__parameters:
-    use_sim_time: true
-    use_odometry_yaw: true           
-    wait_for_datum: false            
+    use_sim_time: false    
+    use_odometry_yaw: false 
+    wait_for_datum: false
     publish_filtered_gps: true
-    yaw_offset: 0.0                 
+    # [중요] IMU가 북쪽을 0으로 줄 때, ROS 좌표계(동쪽 0도)에 맞추려면 보통 1.57(90도)을 넣습니다.
+    yaw_offset: -1.57 
     magnetic_declination_radians: 0.0 
-    zero_altitude: true              
+    zero_altitude: true 
     
     gps_input_topic: /ublox_gps_node/fix
     imu_input_topic: /imu/data
