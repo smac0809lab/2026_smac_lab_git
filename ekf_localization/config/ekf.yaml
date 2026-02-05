@@ -1,42 +1,47 @@
 ekf_filter_node:
   ros__parameters:
-    frequency: 30.0
+    frequency: 100.0
     two_d_mode: true
     publish_tf: true
     map_frame: map
     odom_frame: odom
     base_link_frame: base_link
-    world_frame: odom  # 나중에 안정화되면 map으로 변경 추천
+    world_frame: odom
 
-    # IMU 입력
+    # IMU 입력 설정
     imu0: /imu/data
     imu0_remove_gravitational_acceleration: true
+    
+    # [수정] 부호가 반대인 Orientation(Yaw)은 false로 꺼서 무시합니다.
+    # 대신 각속도(Angular velocity)를 사용하되, 아래 '임시 조치'를 참고하세요.
     imu0_config: [false, false, false,
-                  true,  true,  true,  # Roll, Pitch, Yaw 사용
+                  false, false, false, # Orientation 사용 안 함
                   false, false, false,
                   true,  true,  true,  # Angular velocity 사용
-                  false, false, false]
+                  true,  true,  true]  # Linear acceleration 사용
 
-    # GPS 입력 (navsat에서 실시간으로 만들어줄 토픽)
+    imu0_relative: true                # 켰을 때 정면을 0으로 설정
+    imu0_queue_size: 10
+
+    # GPS 입력
     odom0: /odometry/gps
-    odom0_config: [true,  true,  false, # X, Y 위치 사용
+    odom0_config: [true,  true,  false, 
                    false, false, false,
                    false, false, false,
                    false, false, false,
                    false, false, false]
+    odom0_queue_size: 10
 
 navsat_transform:
   ros__parameters:
     use_sim_time: true
-    use_odometry_yaw: true               # 안정적인 방향 계산을 위해 추가
-    wait_for_datum: false                # 첫 GPS 지점을 원점으로 사용
+    use_odometry_yaw: true           
+    wait_for_datum: false            
     publish_filtered_gps: true
-    yaw_offset: 1.5708                   # ENU/NED 좌표계 변환 보정
-    magnetic_declination_radians: 0.148  # 진북-자북 오차 보정 (한국 기준)
-    zero_altitude: true                  # 2D 주행 시 필수 (Z축 폭주 방지)
-
-
-    # 입력 토픽 이름 리매핑 (중요!)
+    yaw_offset: 0.0                 
+    magnetic_declination_radians: 0.0 
+    zero_altitude: true              
+    
     gps_input_topic: /ublox_gps_node/fix
     imu_input_topic: /imu/data
     odom_input_topic: /odometry/filtered
