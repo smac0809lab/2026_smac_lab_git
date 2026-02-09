@@ -25,6 +25,7 @@ setup(
     entry_points={
         'console_scripts': [
           'lidar_cluster_node = lidar_cluster.lidar_cluster_node:main',
+          'lidar_dbscan_node = lidar_cluster.lidar_dbscan_node:main',
         ],
     },
 
