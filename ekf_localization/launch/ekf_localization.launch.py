@@ -37,7 +37,7 @@ def generate_launch_description():
     # 센서에서 나오는 원본(/ublox_gps_node/fix)을 받아서 필터링된 토픽을 냅니다.
     gps_filter_node = Node(
         package='ekf_localization',
-        executable='gps_reliability_filter_node',
+        executable='gps_reliability_filtered_node',
         name='gps_reliability_filter',
         output='screen',
         remappings=[
