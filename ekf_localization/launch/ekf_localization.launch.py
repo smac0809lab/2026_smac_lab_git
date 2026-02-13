@@ -24,27 +24,15 @@ def generate_launch_description():
         ])
     )
 
-    # 3. IMU 센서 구동 (EBIMU)
+    # 3. IMU 센서 구동 (EBIMU 원본 데이터 발행)
     ebimu_node = Node(
         package='ebimu_pkg',
         executable='ebimu_node',
         name='ebimu_node',
         output='screen'
-        # 필요시 remappings=[('/imu/data_raw', '/imu/data')] 추가
     )
 
-    # 4. GPS 신뢰도 필터 노드 (사용자 정의)
-    # 센서에서 나오는 원본(/ublox_gps_node/fix)을 받아서 필터링된 토픽을 냅니다.
-    gps_filter_node = Node(
-        package='ekf_localization',
-        executable='gps_reliability_filtered_node',
-        name='gps_reliability_filter',
-        output='screen',
-        remappings=[
-            ('input_gps', '/ublox_gps_node/fix'),
-            ('output_gps', '/gps_reliability_filtered')
-        ]
-    )
+    
 
     # 5. Navsat Transform 노드 (GPS -> XY 변환)
     navsat_node = Node(
@@ -54,8 +42,8 @@ def generate_launch_description():
         output='screen',
         parameters=[config_file],
         remappings=[
-            ('gps/fix', '/gps_reliability_filtered'), # 필터링된 토픽 구독
-            ('imu', '/imu/data'),
+            ('gps/fix', '/ublox_gps_node/fix'),
+            ('imu', '/imu/data'),       # 필터링된 데이터 사용
             ('odometry/filtered', '/odometry/filtered')
         ]
     )
@@ -66,7 +54,10 @@ def generate_launch_description():
         executable='ekf_node',
         name='ekf_filter_node',
         output='screen',
-        parameters=[config_file]
+        parameters=[config_file],
+        remappings=[
+            ('imu0', '/imu/data')       # yaml 설정에 맞춰 필터링된 데이터 사용
+        ]
     )
 
     # 7. Static TF (좌표계 정의)
@@ -84,8 +75,7 @@ def generate_launch_description():
     return LaunchDescription([
         ublox_launch,
         ntrip_launch,
-        ebimu_node,
-        gps_filter_node,
+        ebimu_node,  
         navsat_node,
         ekf_node,
         static_tf_imu,

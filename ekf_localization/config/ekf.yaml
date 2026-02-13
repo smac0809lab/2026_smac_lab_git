@@ -1,47 +1,33 @@
 ekf_filter_node:
   ros__parameters:
-    frequency: 100.0
+    frequency: 100.0      # EKF 연산 주기
     two_d_mode: true
     publish_tf: true
+    
     map_frame: map
     odom_frame: odom
     base_link_frame: base_link
     world_frame: odom
 
-    # IMU 입력 설정
+    # [수정] 우리가 만든 필터링된 IMU 사용
     imu0: /imu/data
-    imu0_remove_gravitational_acceleration: true
+    imu0_remove_gravitational_acceleration: false # 우리 코드에서 이미 제거함
     
-    # [확인] Orientation을 true로 했으므로 IMU의 절대 각도를 믿고 사용합니다.
+    # 설정 순서: [x, y, z, roll, pitch, yaw, vx, vy, vz, vroll, vpitch, vyaw, ax, ay, az]
     imu0_config: [false, false, false,
-                  true,  true,  false,  # Roll, Pitch, Yaw 사용
+                  true,  true,  true,  # Orientation (Roll, Pitch, Yaw)
                   false, false, false,
-                  true,  true,  true,  
-                  true,  true,  true]  
+                  true,  true,  true,  # Angular Velocity (회전 속도)
+                  true,  true,  false] # Linear Acceleration (X, Y 가속도)
 
-    imu0_relative: false               # [수정] 절대 각도(북쪽 기준)를 사용하도록 false 설정
+    imu0_relative: false   # 절대 각도(북쪽 기준) 사용
     imu0_queue_size: 10
 
-    # GPS 입력
+    # GPS 기반 Odometry (navsat_transform 결과물)
     odom0: /odometry/gps
-    odom0_config: [true,  true,  false, 
+    odom0_config: [true,  true,  false, # X, Y 위치만 신뢰
                    false, false, false,
                    false, false, false,
                    false, false, false,
                    false, false, false]
     odom0_queue_size: 10
-
-navsat_transform:
-  ros__parameters:
-    use_sim_time: false    
-    use_odometry_yaw: false 
-    wait_for_datum: false
-    publish_filtered_gps: true
-    # [중요] IMU가 북쪽을 0으로 줄 때, ROS 좌표계(동쪽 0도)에 맞추려면 보통 1.57(90도)을 넣습니다.
-    yaw_offset: -1.57 
-    magnetic_declination_radians: 0.0 
-    zero_altitude: true 
-    
-    gps_input_topic: /ublox_gps_node/fix
-    imu_input_topic: /imu/data
-    odom_input_topic: /odometry/filtered

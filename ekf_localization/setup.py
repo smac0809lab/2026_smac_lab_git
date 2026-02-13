@@ -25,7 +25,7 @@ setup(
     entry_points={
         'console_scripts': [
             # 실행파일명 = 패키지명.파일명:메인함수
-            'gps_reliability_filtered_node = ekf_localization.gps_reliability_filtered:main',
+
         ],
     },
 )

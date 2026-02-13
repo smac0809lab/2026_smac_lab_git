@@ -27,15 +27,10 @@ def generate_launch_description():
         output='screen'
     )
 
-    ekf_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([
-            os.path.join(get_package_share_directory('ekf_localization'), 'launch', 'ekf_localization.launch.py')
-        ])
-    )
+    
 
     return LaunchDescription([
         ublox_launch,
         ntrip_launch,
-        ebimu_node,
-        ekf_launch
+        ebimu_node
     ])

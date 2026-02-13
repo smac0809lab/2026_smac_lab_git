@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'ebimu_pkg'
+package_name = 'imu_encoder'
 
 setup(
     name=package_name,
@@ -13,17 +13,18 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='e2box',
-    maintainer_email='e2b@e2box.co.kr',
+    maintainer='user',
+    maintainer_email='smac0809lab@gmail.com',
     description='TODO: Package description',
     license='TODO: License declaration',
-    tests_require=['pytest'],
+    extras_require={
+        'test': [
+            'pytest',
+        ],
+    },
     entry_points={
         'console_scripts': [
-            'ebimu_publisher = ebimu_pkg.ebimu_publisher:main',
-            'ebimu_subscriber = ebimu_pkg.ebimu_subscriber:main',
-            'ebimu_node = ebimu_pkg.ebimu_node:main',
-            'imu_odometry = ebimu_pkg.imu_odometry:main'
+            'imu_encoder_node = imu_encoder.imu_encoder:main',
         ],
     },
 )
