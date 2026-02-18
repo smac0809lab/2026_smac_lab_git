@@ -31,3 +31,15 @@ ekf_filter_node:
                    false, false, false,
                    false, false, false]
     odom0_queue_size: 10
+
+navsat_transform: # ekf_filter_node와 동일한 라인에서 시작해야 함
+  ros__parameters:
+    frequency: 100.0  # 말씀하신 대로 100으로 통일
+    delay: 3.0
+    magnetic_declination_radians: 0.15
+    yaw_offset: 2.86
+    zero_altitude: true
+    wait_for_datum: false # 첫 GPS 수신지를 (0,0)으로 설정
+    use_odometry_yaw: false
+    broadcast_cartesian_transform: true
+    publish_filtered_gps: true          

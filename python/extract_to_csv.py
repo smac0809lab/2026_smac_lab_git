@@ -4,19 +4,21 @@ from mcap_ros2.reader import read_ros2_messages
 from datetime import datetime
 
 # === 설정 부분 ===
-NEW_BAG_PATH = "/home/user/ros2_ws/rosbag/0212.mcap" 
+NEW_BAG_PATH = "/home/user/ros2_ws/rosbag/0218_3.mcap" 
 OUTPUT_DIR = "log"
 
 if not os.path.exists(OUTPUT_DIR):
     os.makedirs(OUTPUT_DIR)
 
 # 추출할 토픽 리스트 및 컬럼 정의
-# /imu/data에 ax, ay, az (가속도)를 추가했습니다.
 TOPICS = {
     '/ublox_gps_node/fix': ['human_time', 'timestamp', 'lat', 'lon', 'alt'],
     '/imu/data': ['human_time', 'timestamp', 'qx', 'qy', 'qz', 'qw', 'wx', 'wy', 'wz', 'ax', 'ay', 'az'], 
     '/odometry/gps': ['human_time', 'timestamp', 'x', 'y', 'z'],
-    '/odometry/filtered': ['human_time', 'timestamp', 'x', 'y', 'z', 'qx', 'qy', 'qz', 'qw']
+    '/odometry/filtered': ['human_time', 'timestamp', 'x', 'y', 'z', 'qx', 'qy', 'qz', 'qw'],
+    # --- [새로 추가된 토픽들] ---
+    '/odometry/imu_encoder': ['human_time', 'timestamp', 'x', 'y', 'vx', 'yaw'], # 융합 위치 및 속도
+    '/vehicle/encoder_velocity': ['human_time', 'timestamp', 'speed_ms']        # 인코더 원본 속도
 }
 
 files = {topic: open(f"{OUTPUT_DIR}/{topic.replace('/', '_')}.csv", 'w', newline='') for topic in TOPICS}
@@ -49,13 +51,8 @@ try:
             elif topic == '/imu/data':
                 o = ros_msg.orientation
                 w = ros_msg.angular_velocity
-                a = ros_msg.linear_acceleration  # 가속도 데이터 추출
-                writers[topic].writerow([
-                    human_time, t, 
-                    o.x, o.y, o.z, o.w,      # Orientation
-                    w.x, w.y, w.z,           # Angular Velocity
-                    a.x, a.y, a.z            # Linear Acceleration (추가됨)
-                ])
+                a = ros_msg.linear_acceleration
+                writers[topic].writerow([human_time, t, o.x, o.y, o.z, o.w, w.x, w.y, w.z, a.x, a.y, a.z])
                 
             elif topic == '/odometry/gps':
                 p = ros_msg.pose.pose.position
@@ -66,8 +63,28 @@ try:
                 q = ros_msg.pose.pose.orientation
                 writers[topic].writerow([human_time, t, p.x, p.y, p.z, q.x, q.y, q.z, q.w])
 
+            # --- [추가된 로직 시작] ---
+            elif topic == '/odometry/imu_encoder':
+                p = ros_msg.pose.pose.position
+                v = ros_msg.twist.twist.linear
+                q = ros_msg.pose.pose.orientation
+                # 쿼터니언에서 간단한 Yaw 값 계산 (필요시 사용)
+                import math
+                siny_cosp = 2 * (q.w * q.z + q.x * q.y)
+                cosy_cosp = 1 - 2 * (q.y * q.y + q.z * q.z)
+                yaw = math.atan2(siny_cosp, cosy_cosp)
+                
+                writers[topic].writerow([human_time, t, p.x, p.y, v.x, yaw])
+
+            elif topic == '/vehicle/encoder_velocity':
+                v_x = ros_msg.twist.twist.linear.x
+                writers[topic].writerow([human_time, t, v_x])
+            # --- [추가된 로직 끝] ---
+
 finally:
     for f in files.values():
         f.close()
 
-print(f"✅ 추출 완료! log 폴더 내 CSV 파일을 확인하세요.")
+print(f"✅ 추출 완료! log 폴더 내 아래 파일들이 생성되었습니다:")
+for t in TOPICS.keys():
+    print(f" - {t.replace('/', '_')}.csv")
