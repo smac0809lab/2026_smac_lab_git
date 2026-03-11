@@ -32,7 +32,7 @@ class LidarDBSCANNode(Node):
         self.declare_parameter('range_max_override', 0.0)  # 0이면 scan.range_max 사용
 
         # DBSCAN params
-        self.declare_parameter('eps', 0.25)            # meters (핵심 튜닝값)
+        self.declare_parameter('eps', 0.25)            # meters 
         self.declare_parameter('min_samples', 6)       # 클러스터 최소 점 개수
 
         # Post-filtering (노이즈/벽 처리용)

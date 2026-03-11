@@ -26,6 +26,8 @@ setup(
         'console_scripts': [
           'lidar_cluster_node = lidar_cluster.lidar_cluster_node:main',
           'lidar_dbscan_node = lidar_cluster.lidar_dbscan_node:main',
+          'lidar_dbscan_length_node = lidar_cluster.lidar_dbscan_length_node:main',
+          'lidar_dbscan_leng2_node = lidar_cluster.lidar_dbscan_leng2_node:main',
         ],
     },
 
