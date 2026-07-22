@@ -1,0 +1,12 @@
+navsat_transform:
+  ros__parameters:
+    use_sim_time: false
+    use_odometry_yaw: false
+    wait_for_datum: false
+    publish_filtered_gps: true
+    yaw_offset: -1.57
+    magnetic_declination_radians: 0.0
+    zero_altitude: true
+    gps_input_topic: /ublox_gps_node/fix
+    imu_input_topic: /imu/data
+    odom_input_topic: /odometry/filtered

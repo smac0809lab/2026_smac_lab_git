@@ -1,0 +1,32 @@
+ekf_filter_node:
+  ros__parameters:
+    frequency: 100.0
+    two_d_mode: true
+    publish_tf: true
+    map_frame: map
+    odom_frame: odom
+    base_link_frame: base_link
+    world_frame: odom
+    twist0: /wheel_twist_stamped  # odom0에서 twist0로 변경
+    twist0_config: [false, false, false, # x, y, z
+                false, false, false, # roll, pitch, yaw
+                true,  false, false, # vx, vy, vz (속도 입력 활성화)
+                false, false, false, # vroll, vpitch, vyaw
+                false, false, false]
+    twist0_queue_size: 10
+    imu0: /imu/data
+    imu0_remove_gravitational_acceleration: true
+    imu0_config: [false, false, false,
+		  false, false, true,
+		  false, false, false, 	
+		  false, false, false, 	
+		  false, false, false]
+    imu0_relative: false
+    imu0_queue_size: 10
+    odom1: /odometry/gps
+    odom1_config: [true, true, false,	
+                   false, false, false, 	
+                   false, false, false,	
+                   false, false, false, 	
+                   false, false, false]
+    odom1_queue_size: 10
