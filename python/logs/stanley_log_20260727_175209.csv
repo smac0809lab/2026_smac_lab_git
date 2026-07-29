@@ -1,0 +1,1 @@
+time,utm_x,utm_y,path_type,vehicle_yaw_deg,path_yaw_deg,cte_meter,k_gain,v_kmh,target_steer_deg,current_steer_deg,kp,ki,kd,closest_cluster_dist,r_state,y_state,g_state,f_state,l_state,light_area,stopline_dist

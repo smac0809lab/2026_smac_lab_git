@@ -4,16 +4,8 @@ from launch import LaunchDescription
 from launch_ros.actions import Node
 
 def generate_launch_description():
-    # 설정 파일 경로
+    # 설정 파일 경로 (본인의 패키지 이름과 경로에 맞춰 수정하세요)
     config_file = os.path.join(get_package_share_directory('ekf_localization'), 'config', 'ekf.yaml')
-
-    # 0. 브릿지 노드
-    bridge_node = Node(
-        package='my_bridge_pkg',
-        executable='bridge_node',
-        name='speed_bridge',
-        output='screen'
-    )
 
     # 1. GPS 신뢰도 필터 노드
     gps_filter_node = Node(
@@ -63,7 +55,6 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        bridge_node,
         gps_filter_node,
         navsat_node,
         ekf_node,

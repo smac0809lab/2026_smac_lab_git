@@ -12,7 +12,7 @@ class EBTImuNode(Node):
         
         # 1. 시리얼 포트 설정 (포트 이름과 보드레이트 확인 필수)
         # EBTerminal에서 확인한 포트(예: /dev/ttyUSB0)로 수정하세요.
-        self.serial_port = serial.Serial('/dev/ttyUSB0', 115200, timeout=0.1)
+        self.serial_port = serial.Serial('/dev/ttyIMU', 115200, timeout=0.1)
         
         self.imu_pub = self.create_publisher(Imu, 'imu/data', 10)
         self.mag_pub = self.create_publisher(MagneticField, 'imu/mag', 10)
@@ -22,7 +22,6 @@ class EBTImuNode(Node):
 
     def euler_to_quaternion(self, r, p, y):
         """오일러 각(deg)을 쿼터니언으로 변환"""
-        y = -y
         r, p, y = np.radians([r, p, y])
         qx = np.sin(r/2) * np.cos(p/2) * np.cos(y/2) - np.cos(r/2) * np.sin(p/2) * np.sin(y/2)
         qy = np.cos(r/2) * np.sin(p/2) * np.cos(y/2) + np.sin(r/2) * np.cos(p/2) * np.sin(y/2)
@@ -59,7 +58,7 @@ class EBTImuNode(Node):
                     # 각속도 (deg/s -> rad/s 변환)
                     imu_msg.angular_velocity.x = np.radians(gx)
                     imu_msg.angular_velocity.y = np.radians(gy)
-                    imu_msg.angular_velocity.z = -np.radians(gz)
+                    imu_msg.angular_velocity.z = np.radians(gz)
 
                     # 가속도 (g -> m/s^2 변환, 1g = 9.80665)
                     imu_msg.linear_acceleration.x = ax * 9.80665

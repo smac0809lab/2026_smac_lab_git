@@ -10,7 +10,7 @@ def generate_launch_description():
           DeclareLaunchArgument('namespace',             default_value='/'),
           DeclareLaunchArgument('node_name',             default_value='ntrip_client'),
           DeclareLaunchArgument('debug',                 default_value='false'),
-          DeclareLaunchArgument('host',                  default_value='RTS2.ngii.go.kr'),
+          DeclareLaunchArgument('host',                  default_value='RTS1.ngii.go.kr'),
           DeclareLaunchArgument('port',                  default_value='2101'),
           DeclareLaunchArgument('mountpoint',            default_value='VRS-RTCM31'),
           DeclareLaunchArgument('ntrip_version',         default_value='None'),
